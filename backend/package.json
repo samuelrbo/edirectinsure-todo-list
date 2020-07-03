@@ -1,0 +1,10 @@
+{
+  "name": "edirectinsure-todo-list-api",
+  "version": "1.0.0",
+  "description": "EDirectInsure TODO List API - Code challange",
+  "main": "index.js",
+  "repository": "https://github.com/samuelrbo/edirectinsure-todo-list/backend",
+  "author": "Samuel Ramon <samuelrbo@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
