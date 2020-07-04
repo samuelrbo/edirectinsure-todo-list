@@ -2,9 +2,27 @@
   "name": "edirectinsure-todo-list-api",
   "version": "1.0.0",
   "description": "EDirectInsure TODO List API - Code challange",
-  "main": "index.js",
+  "main": "server.js",
   "repository": "https://github.com/samuelrbo/edirectinsure-todo-list/backend",
   "author": "Samuel Ramon <samuelrbo@gmail.com>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js || node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv-safe": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.21",
+    "morgan": "^1.10.0",
+    "rotating-file-stream": "^2.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }

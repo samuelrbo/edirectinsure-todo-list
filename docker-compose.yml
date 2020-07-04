@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  api:
+    image: edirectinsure-todo-list-api:${API_VERSION}
+    container_name: edirectinsure-todo-list-api
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      NODE_ENV: "${NODE_ENV}"
+      MONGO_URI: "${MONGO_URI}"
+      JWT_SECRET: "${JWT_SECRET}"
