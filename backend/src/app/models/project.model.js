@@ -12,4 +12,9 @@ const Project = mongoose.Schema({
   timestamps: true
 });
 
+Project.pre('remove', function(next) {
+  Task.deleteMany({ _id: this.tasks });
+  next();
+});
+
 module.exports = mongoose.model('Project', Project);

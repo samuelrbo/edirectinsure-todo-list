@@ -1,5 +1,6 @@
 const Task = require('./../models/task.model');
 const Project = require('./../models/project.model');
+const { verifyProject } = require('./../utils/validators');
 
 class TaskController {
 
@@ -7,17 +8,14 @@ class TaskController {
     let status = 200, data = {};
 
     try {
-      const project = this.verifyProject(req);
-
-      data = req.body;
-      data.project = project;
+      const project = await verifyProject(req, Project);
 
       const task = new Task(req.body);
       await task.save();
 
       data = task;
 
-      project.tasks.push(task);
+      project.tasks.push(task._id);
       await project.save();
 
     } catch (error) {
@@ -35,10 +33,8 @@ class TaskController {
     let status = 200, data = {};
 
     try {
-      const project = this.verifyProject(req);
-      const find = { _id: req.param.id, project: project._id };
-      const task = await Task.findOneAndUpdate(find, req.body, { new: true });
-
+      await verifyProject(req, Project);
+      const task = await Task.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true });
       if (!task) {
         throw { status: 400, message: 'Task not found' };
       }
@@ -61,8 +57,17 @@ class TaskController {
     let status = 200, data = {};
 
     try {
-      this.verifyProject(req);
-      await Task.findOneAndDelete({ _id: req.param.id, project: project._id });
+      const project = await verifyProject(req, Project);
+      const taskExistsInProject = project.tasks.find(t => t.toString() === req.params.id);
+      if (!taskExistsInProject) {
+        throw { status: 400, message: 'Task not found in project' };
+      }
+
+      await Task.findOneAndDelete({ _id: req.params.id });
+
+      project.tasks = project.tasks.filter(t => t.toString() != req.params.id);
+
+      await project.save();
 
       status = 204;
       data = { message: 'Project removed' }
@@ -76,15 +81,6 @@ class TaskController {
     } finally {
       return res.status(status).json(data);
     }
-  }
-
-  async verifyProject(req) {
-    const project = await Project.findOne({ _id: req.params.projectId, owner: req.user._id });
-    if (!project) {
-      throw { status = 204, message: 'No project found' };
-    }
-
-    return project;
   }
 }
 

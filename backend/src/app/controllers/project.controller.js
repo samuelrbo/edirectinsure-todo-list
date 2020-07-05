@@ -7,7 +7,7 @@ class ProjectController {
     let status = 200, data = {};
 
     try {
-      data = await Project.find({ owner: req.user._id }).exec();
+      data = await Project.find({ owner: req.user._id }).populate('tasks').exec();
       if (!data) {
         status = 204;
       }
@@ -26,7 +26,7 @@ class ProjectController {
     let status = 200, data = {};
 
     try {
-      data = await Project.findOne({ _id: req.params.id, owner: req.user._id });
+      data = await Project.findOne({ _id: req.params.id, owner: req.user._id }).populate('tasks');
       if (!data) {
         status = 204;
       }
@@ -101,9 +101,7 @@ class ProjectController {
         throw { status: 400, message: 'No project found' };
       }
 
-      // TODO Verify mongoose
-      await Task.deleteMany({ project: project._id });
-      await Project.findOneAndDelete(find);
+      await Project.remove(find);
 
       status = 204;
       data = { message: 'Project removed' }
