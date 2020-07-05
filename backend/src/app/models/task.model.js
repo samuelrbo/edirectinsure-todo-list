@@ -5,6 +5,7 @@ const Task = mongoose.Schema({
   title: { type: String, require: [ true, 'Task\'s title is required' ] },
   project: { type: mongoose.Types.ObjectId, ref: 'Project' },
   description: { type: String },
+  done: { type: Boolean, default: false },
   conclusion: { type: Date }
 },
 {

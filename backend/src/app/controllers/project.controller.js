@@ -1,4 +1,5 @@
 const Project = require('./../models/project.model');
+const Task = require('./../models/task.model');
 
 class ProjectController {
 
@@ -80,7 +81,7 @@ class ProjectController {
       data = project
 
     } catch (error) {
-       // Error handling
+      // Error handling
       console.log(error);
       status = error.status || 500;
       data.error = error.message;
@@ -91,11 +92,18 @@ class ProjectController {
   }
 
   async delete(req, res) {
-    // TODO Delete Tasks before delete Project
     let status = 200, data = {};
 
     try {
-      await Project.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+      const find = { _id: req.params.id, owner: req.user._id };
+      const project = Project.findOne(find);
+      if (!project) {
+        throw { status: 400, message: 'No project found' };
+      }
+
+      // TODO Verify mongoose
+      await Task.deleteMany({ project: project._id });
+      await Project.findOneAndDelete(find);
 
       status = 204;
       data = { message: 'Project removed' }
