@@ -3,57 +3,112 @@ const Project = require('./../models/project.model');
 class ProjectController {
 
   async findByUser(req, res) {
-    const user = req.user;
+    let status = 200, data = {};
 
-    return res.status(501).json({ message: 'Not implemented, yet' });
+    try {
+      data = await Project.find({ owner: req.user._id }).exec();
+      if (!data) {
+        status = 204;
+      }
+
+    } catch (error) {
+      console.log(error);
+      status = error.status || 500;
+      data.error = error.message;
+
+    } finally {
+      return res.status(status).json(data);
+    }
   }
 
   async findById(req, res) {
-    const data = await Project.findOne({ _id: req.params.id, owner: req.user._id });
-    return data ? res.json(data) : res.status(204).send({ message: 'No data found to display.' });
+    let status = 200, data = {};
+
+    try {
+      data = await Project.findOne({ _id: req.params.id, owner: req.user._id });
+      if (!data) {
+        status = 204;
+      }
+
+    } catch (error) {
+      console.log(error);
+      status = error.status || 500;
+      data.error = error.message;
+
+    } finally {
+      return res.status(status).json(data);
+    }
   }
 
   async store(req, res) {
-    const { isValid, message, status } = this.validate(req);
+    let status = 200, data = {};
 
-    if (!isValid) {
-      return res.status(status || 400).json({ message });
+    try {
+      const project = new Project({
+        title: req.body.title,
+        owner: req.user._id,
+      });
+
+      await project.save();
+
+      data = project;
+      status = 201;
+
+    } catch (error) {
+       // Error handling
+      console.log(error);
+      status = error.status || 500;
+      data.error = error.message;
+
+    } finally {
+      return res.status(status).json(data);
     }
-
-    const saveData = req.body.data;
-    saveData.owner = req.user._id;
-
-    const data = await Project.create(saveData);
-    return res.json(data);
   }
 
   async update(req, res) {
-    const data = await Project.findOneAndUpdate(
-      { _id: req.params.id, owner: req.user._id },
-      { $set: req.body.data },
-      { new: true },
-      (err) => {
-        if (err) {
-          return res.status(400).json({ message: err });
-        }
+    let status = 200, data = {};
+
+    try {
+      const find = { _id: req.params.id, owner: req.user._id };
+      const project = await Project.findOneAndUpdate(find, req.body, { new: true });
+
+      if (!project) {
+        throw { status: 400, message: 'Project not found' };
       }
-    );
 
-    await data.save();
+      // Return updated project
+      data = project
 
-    return res.json(data);
+    } catch (error) {
+       // Error handling
+      console.log(error);
+      status = error.status || 500;
+      data.error = error.message;
+
+    } finally {
+      return res.status(status).json(data);
+    }
   }
 
   async delete(req, res) {
-    return res.status(501).json({ message: 'Not implemented, yet' });
-  }
+    // TODO Delete Tasks before delete Project
+    let status = 200, data = {};
 
-  async validate(req) {
-    let isValid = false;
-    let message = 'Not implemented, yet';
-    let status = 501;
+    try {
+      await Project.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
 
-    return { isValid, message, status };
+      status = 204;
+      data = { message: 'Project removed' }
+
+    } catch (error) {
+      // Error handling
+      console.log(error);
+      status = error.status || 500;
+      data.error = error.message;
+
+    } finally {
+      return res.status(status).json(data);
+    }
   }
 }
 

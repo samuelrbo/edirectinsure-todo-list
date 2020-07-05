@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const { isEmail } = require('./../utils/validators');
-
-const SALT_WORK_FACTOR = 10;
+const { hash } = require('./../utils/password');
 
 const User = mongoose.Schema({
   name: { type: String, required: [ true, 'User\'s name is required' ] },
@@ -23,9 +21,7 @@ User.pre('save', function (next) {
   }
 
   try {
-    const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-    const hash = bcrypt.hashSync(this.password, salt);
-    this.password = hash;
+    this.password = hash(this.password);
 
     return next();
 
