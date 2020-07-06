@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const unprotectedPaths = ['register', 'login'];
 
 module.exports = async (req, res, next) => {
-  const isUnprotectedPath = unprotectedPaths.filter(p => req.path.indexOf(p) !== -1);
+  const isUnprotectedPath = unprotectedPaths.filter(p => req.path.endsWith(p));
 
   if (!isUnprotectedPath || isUnprotectedPath.length == 0) {
     const header = req.headers['x-access-token'] || req.headers['authorization'];

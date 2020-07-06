@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const toJson = require('@meanie/mongoose-to-json');
 
 const User = require('./user.model');
 const Task = require('./task.model');
@@ -16,5 +17,7 @@ Project.pre('remove', function(next) {
   Task.deleteMany({ _id: this.tasks });
   next();
 });
+
+Project.plugin(toJson);
 
 module.exports = mongoose.model('Project', Project);

@@ -3,14 +3,45 @@ const Task = require('./../models/task.model');
 
 class ProjectController {
 
+  /**
+   * React-Admin
+   *
+   * GET_LIST:
+   *   sort=['title','ASC']&range=[0, 24]&filter={title:'bar'}
+   *
+   * GET_MANY:
+   *   filter={ids:[123,456,789]}
+   *
+   * GET_MANY_REFERENCE:
+   *   filter={author_id:345}
+   */
   async findByUser(req, res) {
     let status = 200, data = {};
+    const filter = req.query.filter ? req.query.filter : {};
+    const range = req.query.range ? eval(req.query.range) : [0,9];
+
+    let [ field, criteria ] = req.query.sort ? eval(req.query.sort) : [ 'createdAt', 'DESC' ];
+    if (field === 'id') {
+      field = '_id';
+    }
+    let sort = criteria === 'ASC' ? `${field}` : `-${field}`;
+
+    const from = range[0];
+    const end = range[1];
+    const size = (end - from) + 1;
 
     try {
-      data = await Project.find({ owner: req.user._id }).populate('tasks').exec();
+      data = await Project.find({ owner: req.user._id })
+        .limit(size).skip(from)
+        .sort(sort)
+        .populate('tasks').exec();
+
       if (!data) {
         status = 204;
       }
+
+      const total  = await Project.countDocuments({ owner: req.user._id });
+      res.set({ 'Content-Range': `project ${from}-${end}/${total}` });
 
     } catch (error) {
       console.log(error);

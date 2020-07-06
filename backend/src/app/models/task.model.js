@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Project = require('./project.model');
+const toJson = require('@meanie/mongoose-to-json');
 
 const Task = mongoose.Schema({
   title: { type: String, require: [ true, 'Task\'s title is required' ] },
@@ -8,5 +9,7 @@ const Task = mongoose.Schema({
 {
   timestamps: true
 });
+
+Task.plugin(toJson);
 
 module.exports = mongoose.model('Task', Task);

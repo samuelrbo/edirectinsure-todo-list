@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@meanie/mongoose-to-json@^2.4.2":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@meanie/mongoose-to-json/-/mongoose-to-json-2.4.2.tgz#8a6c779ab4512d61d735484e8f81d6fc16d81204"
+  integrity sha512-SA7KYG9+sdbegDfAvObi0B4EV5v58qA16VoEG3ka9vcEeYR3lm49MR9JxofU5jJLM9q7HigskIj2IICfq+X3Zw==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"

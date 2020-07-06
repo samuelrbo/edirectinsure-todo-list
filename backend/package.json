@@ -12,6 +12,7 @@
     "dev": "nodemon server.js || node server.js"
   },
   "dependencies": {
+    "@meanie/mongoose-to-json": "^2.4.2",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

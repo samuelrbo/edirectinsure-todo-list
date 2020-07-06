@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const toJson = require('@meanie/mongoose-to-json');
 const { isEmail } = require('./../utils/validators');
 const { hash } = require('./../utils/password');
 
 const User = mongoose.Schema({
+  id: {  },
   name: { type: String, required: [ true, 'User\'s name is required' ] },
   email: { type: String,
     required: [ true, 'User\s email is required' ],
@@ -16,6 +18,7 @@ const User = mongoose.Schema({
 });
 
 User.pre('save', function (next) {
+  this.id = this._id;
   if (!this.isModified('password')) {
     return next();
   }
@@ -29,5 +32,7 @@ User.pre('save', function (next) {
     return next(err);
   }
 });
+
+User.plugin(toJson);
 
 module.exports = mongoose.model('User', User);
